@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jogo: Ligue o objeto ao nome</title>
+  <link rel="stylesheet" href="../css/ingles.css">
+  <style>
+    /* body { font-family: Arial, sans-serif; background:#f2f2f2; padding:5px; display:flex; flex-direction:column; align-items:center; } */
+    h1 { margin-bottom:10px; font-size: 20px; }
+    .container { display:flex; gap:50px; margin-top:10px; flex-direction: row;}
+    .col { display:flex; flex-direction:column; gap:20px; }
+    .item { background:white; padding:10px; width:150px; height:65px; display:flex; align-items:center; justify-content:center; border-radius:10px; border:2px solid #ddd; cursor:pointer; user-select:none; font-size: 30px; text-align:center; transition:0.2s;}
+    .img {font-size: 60px;}
+    .item:hover { background:#e8f0ff; }
+    .selected { border-color:#0066ff; box-shadow:0 0 8px #0066ff; }
+    #feedback { margin-top:30px; font-size:20px; font-weight:bold; }
+    .controls { margin-top:16px; display:flex; gap:8px; }
+    .btn { padding:8px 12px; border-radius:8px; border:0; background:#0066ff; color:white; cursor:pointer }
+  </style>
+</head>
+<body>
+  <h1>Vamos aprender brinquedos em inglês. (Toys)</h1>
+
+  <div class="container">
+    <!-- Coluna de Objetos (Imagens simples usando emojis) -->
+    <div class="col" id="objectsCol">
+      <div class="item img" data-object="ball">⚽</div>
+      <div class="item img" data-object="doll">&#x1FA86</div>
+      <div class="item img" data-object="bicycle">🚲</div>
+      <div class="item img" data-object="car">🚗</div>
+      <div class="item img" data-object="kite">🪁</div>
+    </div>
+
+    <!-- Coluna dos Nomes -->
+    <div class="col" id="namesCol">
+      <div class="item" data-name="ball">Ball</div>
+      <div class="item" data-name="doll">Doll</div>
+      <div class="item" data-name="bicycle">Bicycle</div>
+      <div class="item" data-name="car">Car</div>
+      <div class="item" data-name="kite">Kite</div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button id="shuffleBtn" class="btn">Embaralhar nomes</button>
+    <button id="shuffleBothBtn" class="btn">Embaralhar objetos e nomes</button>
+  </div>
+
+  <div id="feedback" aria-live="polite"></div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    let selectedObj = null;
+    let errors = 0;
+    const scoreBox = document.createElement('div');
+    scoreBox.id = 'scoreBox';
+    scoreBox.style.marginTop = '5px';
+    scoreBox.style.fontSize = '18px';
+    scoreBox.style.fontWeight = 'bold';
+    scoreBox.textContent = 'Erros: 0 / 3';
+    document.body.appendChild(scoreBox);
+    let selectedName = null;
+
+    const objectsCol = document.getElementById('objectsCol');
+    const namesCol = document.getElementById('namesCol');
+    const feedback = document.getElementById('feedback');
+    const shuffleBtn = document.getElementById('shuffleBtn');
+    const shuffleBothBtn = document.getElementById('shuffleBothBtn');
+
+    let objects = Array.from(document.querySelectorAll('#objectsCol .item'));
+    let names = Array.from(document.querySelectorAll('#namesCol .item'));
+
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    function renderNames(arr) {
+      namesCol.innerHTML = '';
+      arr.forEach(n => namesCol.appendChild(n));
+      names = Array.from(document.querySelectorAll('#namesCol .item'));
+      bindNameListeners();
+    }
+
+    function renderObjects(arr) {
+      objectsCol.innerHTML = '';
+      arr.forEach(o => objectsCol.appendChild(o));
+      objects = Array.from(document.querySelectorAll('#objectsCol .item'));
+      bindObjectListeners();
+    }
+
+    function clearSelections() {
+      objects.forEach(o => o.classList.remove('selected'));
+      names.forEach(n => n.classList.remove('selected'));
+      selectedObj = null;
+      selectedName = null;
+    }
+
+    function checkMatch() {
+      if (!selectedObj || !selectedName) return;
+
+      const oVal = selectedObj.dataset.object;
+      const nVal = selectedName.dataset.name;
+
+      if (oVal === nVal) {
+        selectedObj.style.background = '#c8ffcc';
+        selectedName.style.background = '#c8ffcc';
+        feedback.textContent = '✔ Correto!';
+      } else {
+        errors++;
+        scoreBox.textContent = `Erros: ${errors} / 3`;
+        if (errors >= 3) {
+          alert('Você excedeu 3 erros! O jogo será reiniciado.');
+          location.reload();
+          return;
+        }
+
+        selectedObj.style.background = '#ffd4d4';
+        selectedName.style.background = '#ffd4d4';
+        feedback.textContent = '✘ Tente novamente!';
+      }
+
+      setTimeout(() => {
+        if (selectedObj) selectedObj.style.background = 'white';
+        if (selectedName) selectedName.style.background = 'white';
+        feedback.textContent = '';
+        clearSelections();
+      }, 800);
+    }
+
+    function bindObjectListeners() {
+      objects.forEach(obj => {
+        const newObj = obj.cloneNode(true);
+        obj.replaceWith(newObj);
+      });
+      objects = Array.from(document.querySelectorAll('#objectsCol .item'));
+      objects.forEach(obj => {
+        obj.addEventListener('click', () => {
+          // pronúncia
+          const utter = new SpeechSynthesisUtterance(obj.dataset.object);
+          utter.lang = 'en-US';
+          speechSynthesis.speak(utter);
+
+          objects.forEach(o => o.classList.remove('selected'));
+          obj.classList.add('selected');
+          selectedObj = obj;
+          checkMatch();
+        });
+      });
+    }
+
+    function bindNameListeners() {
+      names.forEach(name => {
+        const newName = name.cloneNode(true);
+        name.replaceWith(newName);
+      });
+      names = Array.from(document.querySelectorAll('#namesCol .item'));
+      names.forEach(name => {
+        name.addEventListener('click', () => {
+          // pronúncia
+          const utter = new SpeechSynthesisUtterance(name.dataset.name);
+          utter.lang = 'en-US';
+          speechSynthesis.speak(utter);
+
+          names.forEach(n => n.classList.remove('selected'));
+          name.classList.add('selected');
+          selectedName = name;
+          checkMatch();
+        });
+      });
+    }
+
+    // Inicializa embaralhando nomes
+    (function init() {
+      const shuffled = shuffle(names.slice());
+      renderNames(shuffled);
+      bindObjectListeners();
+    })();
+
+    shuffleBtn.addEventListener('click', () => {
+      const shuffled = shuffle(names.slice());
+      renderNames(shuffled);
+      feedback.textContent = 'Nomes embaralhados!';
+      setTimeout(() => feedback.textContent = '', 800);
+    });
+
+    shuffleBothBtn.addEventListener('click', () => {
+      renderNames(shuffle(names.slice()));
+      renderObjects(shuffle(objects.slice()));
+      feedback.textContent = 'Objetos e nomes embaralhados!';
+      setTimeout(() => feedback.textContent = '', 800);
+    });
+
+  });
+</script>
+
+</body>
+</html>
