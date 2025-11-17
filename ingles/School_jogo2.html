@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Jogo: Ligue o objeto ao nome</title>
-  <link rel="stylesheet" href="../css/ingles.css">
+  <link rel="stylesheet" href="../css/jogos.css">
   <style>
     /* body { font-family: Arial, sans-serif; background:#f2f2f2; padding:5px; display:flex; flex-direction:column; align-items:center; } */
     h1 { margin-bottom:10px; font-size: 20px; }
@@ -13,14 +13,20 @@
     .item { background:white; padding:10px; width:140px; height:90px; display:flex; align-items:center; justify-content:center; border-radius:10px; border:2px solid #ddd; cursor:pointer; user-select:none; font-size: 25px; text-align:center; transition:0.2s;}
     .item:hover { background:#e8f0ff; }
     .selected { border-color:#0066ff; box-shadow:0 0 8px #0066ff; }
-    #feedback { margin-top:30px; font-size:20px; font-weight:bold; }
+    
+    #feedback { 
+      margin-top:10px; 
+      font-size:18px; 
+      font-weight:bold; 
+    }
+
     .controls { margin-top:16px; display:flex; gap:8px; }
     .btn { padding:8px 12px; border-radius:8px; border:0; background:#0066ff; color:white; cursor:pointer }
     .imagem {width: 80px; height: 80px;}
   </style>
 </head>
 <body>
-  <h1>Vamos aprender os objetos da escola em inglês. (School Objects)</h1>
+  <h1>Objetos da escola - School Objects</h1>
 
   <div class="container">
     <!-- Objetos -->
@@ -64,7 +70,7 @@
     scoreBox.id = 'scoreBox';
     scoreBox.style.marginTop = '5px';
     scoreBox.style.fontSize = '18px';
-    scoreBox.style.fontWeight = 'bold';
+    // scoreBox.style.fontWeight = 'bold';
     scoreBox.textContent = 'Erros: 0 / 3';
     document.body.appendChild(scoreBox);
 

@@ -2,7 +2,7 @@
 
 .container {
     min-width: 20rem;
-    min-height: 200px;
+    min-height: 150px;
     background-color: transparent;
     border: 2x solid rgba(255, 255, 255, .2);
     border-radius: 10px;
@@ -88,7 +88,7 @@
     border: none;
     border-radius: 40px;
     cursor: pointer;
-    font-size: 15px;
+    font-size: 0.8rem;
     color: #333;
     font-weight: 600;
     box-shadow: 0 0 10px rgba(0, 0, 0, .1);

@@ -1,0 +1,20 @@
+@import url("geral.css");
+
+body {   
+    padding:5px; 
+    flex-direction:column; 
+    align-items:center; 
+}
+
+ h1 { margin-bottom:10px; font-size: 20px; color: #b86dbc;}
+
+ /* .scoreBox{ */
+    /* scoreBox.style.marginTop = '5px'; */
+    /* scoreBox.style.fontSize = '22px'; */
+    /* scoreBox.style.fontWeight = 'bold'; */
+
+    /* margin-top: 5px; */
+    /* font-size: 50px; */
+    /* font-weight: bold; */
+    /* color: #b86dbc; */
+ /* } */

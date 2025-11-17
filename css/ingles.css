@@ -1,9 +1,5 @@
 @import url("geral.css");
 
-*{
-    font-family: "Poppins", sans-serif;
-}
-
 body {   
     padding:5px; 
     flex-direction:column; 
