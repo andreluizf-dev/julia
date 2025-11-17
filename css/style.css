@@ -23,9 +23,9 @@
 }
 
 .container h1 {
-    font-size: 2rem;
+    font-size: 1.5rem;
     text-align: center;
-    color: #cb82cf;
+    color: #b86dbc;
     padding-bottom: 30px;
 }
 
@@ -88,14 +88,14 @@
     border: none;
     border-radius: 40px;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 15px;
     color: #333;
     font-weight: 600;
     box-shadow: 0 0 10px rgba(0, 0, 0, .1);
 }
 
 .btningles{
-    padding-bottom: 15px;
+    padding-bottom: 15px;    
 }
 
 .botao:hover {
