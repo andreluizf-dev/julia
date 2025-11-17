@@ -6,7 +6,9 @@ body {
     align-items:center; 
 }
 
- h1 { margin-bottom:10px; font-size: 20px; color: #b86dbc;}
+ h1 { margin-bottom:10px; font-size: 20px; 
+    color: var(--h1_cor);
+}
 
  /* .scoreBox{ */
     /* scoreBox.style.marginTop = '5px'; */
