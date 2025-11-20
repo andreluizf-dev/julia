@@ -9,13 +9,25 @@
  /* body { font-family: Arial; background:#f2f2f2; text-align:center; padding:20px; } */
  .image-box { width:260px; height:260px; background:white; border-radius:15px; border:2px solid #ccc; margin:20px auto; display:flex; align-items:center; justify-content:center; }
  img { width:90%; height:90%; object-fit:contain; }
- button { padding:10px; font-size:20px; border-radius:10px; border:0; margin:8px; background:#007bff; color:white; }
+ button { padding:10px; font-size:20px; border-radius:10px; border:0; 
+  margin:5px; 
+  background:#007bff; color:white; }
  .correct { background:#4CAF50 !important; }
  .wrong { background:#E53935 !important; }
+
+ .local{
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  align-items: center;
+ }
 </style>
 </head>
 <body>
-<h1>Identifique o Sólido Geométrico</h1>
+
+
+<div class="painel local">
+  <h1>Sólido Geométrico</h1>
 <div class="image-box">
  <img id="shapeImg" src="" />
 </div>
@@ -26,6 +38,8 @@
  <button onclick="check('cone')" id="btn-cone">Cone</button>
 </div>
 <div><button onclick="embaralhar()" id="btn-cone">Trocar</button></div>
+</div>
+
 <script>
 // Base64 images inserted from file
 const esferaImgs = [
