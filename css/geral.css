@@ -21,5 +21,15 @@ body {
 
 :root{
     --h1_cor: #602363;
+    --corPainel: rgb(255, 224, 243);
+}
+
+.painel{
+    box-shadow: 0 0 10px rgba(0, 0, 0, .3);
+    border: 2x solid rgba(255, 255, 255, .2);
+    backdrop-filter: blur(50px); 
+    background-color: transparent;    
+    border-radius: 15px;
+    /* background:var(--corPainel); */
 }
 

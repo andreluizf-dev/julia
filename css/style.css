@@ -2,12 +2,12 @@
 
 .container {
     min-width: 20rem;   
-    background-color: transparent;
-    border: 2x solid rgba(255, 255, 255, .2);
+    background-color: transparent;    
     border-radius: 10px;
     color: #fff;
     padding: 5px 20px;
     box-shadow: 0 0 10px rgba(0, 0, 0, .3);
+    border: 2x solid rgba(255, 255, 255, .2);
     backdrop-filter: blur(50px); 
 }
 
