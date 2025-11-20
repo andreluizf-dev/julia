@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Prática: Horas exatas — Relógio de ponteiro</title>
+<style>
+  :root{
+    --bg:#f7fafc;
+    --card:#ffffff;
+    --accent:#0ea5a4;
+    --success:#10b981;
+    --danger:#ef4444;
+    --muted:#6b7280;
+  }
+  html,body{height:100%;margin:0;font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;}
+  body{display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#eef2f7 0%,var(--bg) 100%);padding:20px;}
+  .card{
+    width:100%;
+    max-width:720px;
+    background:var(--card);
+    border-radius:16px;
+    box-shadow:0 8px 30px rgba(15,23,42,0.08);
+    padding:18px;
+    box-sizing:border-box;
+  }
+  header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+  h1{font-size:1.1rem;margin:0}
+  .controls{display:flex;gap:8px;align-items:center}
+  button{
+    background:var(--accent);
+    color:white;
+    border:0;padding:8px 12px;border-radius:10px;font-weight:600;
+    box-shadow:0 4px 12px rgba(14,165,164,0.15);cursor:pointer;
+  }
+  button.secondary{background:transparent;color:var(--accent);border:2px solid rgba(14,165,164,0.12)}
+  button:active{transform:translateY(1px)}
+  .row{display:flex;gap:12px;align-items:center}
+  .task{
+    font-size:1rem;color:var(--muted);
+    margin-left:8px;
+    white-space:nowrap;
+  }
+
+  /* clock area */
+  .clock-wrap{display:flex;align-items:center;justify-content:center;padding:16px;}
+  .clock{
+    width: min(86vw, 420px);
+    height: min(86vw, 420px);
+    max-width:420px;
+    max-height:420px;
+    position:relative;
+    touch-action:none;
+  }
+  svg{width:100%;height:100%;display:block}
+
+  .center-dot{
+    position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:14px;height:14px;border-radius:50%;
+    background:#111827;box-shadow:0 2px 6px rgba(17,24,39,0.35);
+    z-index:30;
+  }
+
+  /* hour hand */
+  .hand{
+    transform-origin:50% 50%;
+    transition: transform 180ms cubic-bezier(.2,.9,.2,1);
+  }
+
+  /* face numbers and ticks are drawn in SVG; we style feedback ring */
+  .feedback-ring{
+    position:absolute;inset:0;border-radius:50%;pointer-events:none;
+    transition: box-shadow .25s, transform .25s;
+  }
+  .feedback-ring.success{box-shadow:0 0 0 8px rgba(16,185,129,0.12);transform:scale(1.02)}
+  .feedback-ring.error{box-shadow:0 0 0 8px rgba(239,68,68,0.08);transform:scale(1.01)}
+  .status{
+    text-align:center;margin-top:8px;font-weight:600;height:22px;
+  }
+  .status.ok{color:var(--success)}
+  .status.bad{color:var(--danger)}
+
+  /* small helper area */
+  .helper{
+    display:flex;align-items:center;justify-content:space-between;margin-top:12px;gap:12px;
+  }
+  .hint{color:var(--muted);font-size:0.9rem}
+  .score{font-weight:700;color:#111827}
+
+  /* responsive touch target */
+  @media (max-width:520px){
+    .card{padding:12px;border-radius:12px}
+    button{padding:8px 10px}
+    h1{font-size:1rem}
+  }
+</style>
+</head>
+<body>
+  <div class="card" role="main" aria-label="Exercício de horas">
+    <header>
+      <h1>Pratique horas exatas — Relógio analógico</h1>
+      <div class="controls">
+        <button id="btnNew" title="Novo desafio">Novo</button>
+        <button id="btnShuffle" class="secondary" title="Sortear nova hora">Sortear hora</button>
+      </div>
+    </header>
+
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+      <div class="row">
+        <div style="font-size:0.95rem">Coloque o ponteiro em:</div>
+        <div id="targetLabel" style="font-size:1.2rem;font-weight:800;margin-left:6px">—</div>
+      </div>
+      <div style="margin-left:auto;color:var(--muted);font-size:0.9rem">Horas exatas (apenas)</div>
+    </div>
+
+    <div class="clock-wrap">
+      <div class="clock" id="clock" aria-hidden="false" role="application">
+        <!-- SVG clock face -->
+        <svg viewBox="0 0 200 200" id="svgClock" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <defs>
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000" flood-opacity="0.08"/>
+    </filter>
+  </defs>
+
+  <circle cx="100" cy="100" r="92" fill="#fff" stroke="#e6eef2" stroke-width="1" filter="url(#shadow)"/>
+
+  <g id="ticks"></g>
+
+  <g id="numbers" font-family="Inter, Arial" font-weight="700" font-size="12" fill="#111827" text-anchor="middle"></g>
+
+  <!-- minute hand fixed -->
+  <g id="minuteHandGroup" transform="rotate(0 100 100)">
+    <rect x="99" y="22" width="2" height="78" rx="1" ry="1" fill="#1e293b"/>
+    <circle cx="100" cy="100" r="4" fill="#1e293b"/>
+  </g>
+
+  <!-- hour hand (interactive) -->
+  <g id="hourHandGroup" transform="rotate(0 100 100)">
+    <rect x="97" y="36" width="6" height="64" rx="3" ry="3" fill="#111827" />
+    <circle cx="100" cy="104" r="3.6" fill="#111827"/>
+  </g>
+
+  <circle cx="100" cy="100" r="30" fill="transparent" />
+</svg>
+
+
+        <div class="center-dot" aria-hidden="true"></div>
+        <div id="feedback" class="feedback-ring" aria-hidden="true"></div>
+      </div>
+    </div>
+
+    <div class="status" id="statusText" aria-live="polite"></div>
+
+    <div class="helper">
+      <div class="hint">Arraste o ponteiro (ou toque) até a posição correta. Ele encaixa automaticamente nas horas exatas.</div>
+      <div class="score">Acertos: <span id="score">0</span></div>
+    </div>
+  </div>
+
+<script>
+(() => {
+  // --- State
+  let targetHour = null; // 1..12
+  let score = 0;
+  const svg = document.getElementById('svgClock');
+  const ticksGroup = svg.querySelector('#ticks');
+  const numsGroup = svg.querySelector('#numbers');
+  const hourHandGroup = document.getElementById('hourHandGroup');
+  const targetLabel = document.getElementById('targetLabel');
+  const statusText = document.getElementById('statusText');
+  const feedback = document.getElementById('feedback');
+  const scoreEl = document.getElementById('score');
+
+  // center coordinates relative to SVG viewBox 0..200
+  const cx = 100, cy = 100;
+
+  // draw the ticks and numbers
+  function drawFace(){
+    // clear
+    ticksGroup.innerHTML = '';
+    numsGroup.innerHTML = '';
+    for(let i=0;i<60;i++){
+      const angle = (i * 6 - 90) * Math.PI/180;
+      const rOuter = 92, rInner = (i%5===0?82:88);
+      const x1 = cx + rOuter * Math.cos(angle);
+      const y1 = cy + rOuter * Math.sin(angle);
+      const x2 = cx + rInner * Math.cos(angle);
+      const y2 = cy + rInner * Math.sin(angle);
+      const strokeWidth = (i%5===0?2:1);
+      const line = document.createElementNS('http://www.w3.org/2000/svg','line');
+      line.setAttribute('x1', x1); line.setAttribute('y1', y1);
+      line.setAttribute('x2', x2); line.setAttribute('y2', y2);
+      line.setAttribute('stroke', '#cbd5e1');
+      line.setAttribute('stroke-width', strokeWidth);
+      ticksGroup.appendChild(line);
+    }
+    // numbers 1..12
+    for(let h=1; h<=12; h++){
+      const angle = (h * 30 - 90) * Math.PI/180;
+      const nr = document.createElementNS('http://www.w3.org/2000/svg','text');
+      const r = 68;
+      const x = cx + r * Math.cos(angle);
+      const y = cy + r * Math.sin(angle) + 4; // vertical tweak
+      nr.setAttribute('x', x);
+      nr.setAttribute('y', y);
+      nr.textContent = String(h);
+      numsGroup.appendChild(nr);
+    }
+  }
+
+  // Angle helpers:
+  function pointerToAngle(pageX, pageY){
+    // convert page coords to SVG viewBox coords
+    const rect = svg.getBoundingClientRect();
+    const x = (pageX - rect.left) * (200/rect.width);
+    const y = (pageY - rect.top) * (200/rect.height);
+    const dx = x - cx;
+    const dy = y - cy;
+    let deg = Math.atan2(dy, dx) * 180 / Math.PI; // -180..180 (0 at +x)
+    // convert so 0 = top (12), increasing clockwise
+    let angleFromTop = deg + 90;
+    angleFromTop = ((angleFromTop % 360) + 360) % 360;
+    return angleFromTop;
+  }
+
+  function angleToHour(angleFromTop){
+    // angleFromTop 0..359.999 ; each hour = 30deg
+    const raw = Math.round(angleFromTop / 30) % 12; // 0..11 where 0==12
+    return raw === 0 ? 12 : raw;
+  }
+
+  function hourToAngle(hour){
+    // 12 -> 0deg, 1->30, etc.
+    return ((hour % 12) * 30) % 360;
+  }
+
+  // rotate the hand visually (CSS transform rotate(deg))
+  function setHandAngle(angleDeg, animate=true){
+    if(!animate) hourHandGroup.style.transition = 'none';
+    else hourHandGroup.style.transition = '';
+    hourHandGroup.setAttribute('transform', `rotate(${angleDeg} 100 100)`);
+    // ensure transition restored
+    if(!animate){
+      requestAnimationFrame(()=> hourHandGroup.style.transition = '');
+    }
+  }
+
+  // feedback helpers
+  function showStatus(text, kind){
+    statusText.textContent = text;
+    statusText.className = 'status ' + (kind === 'ok' ? 'ok' : kind === 'bad' ? 'bad' : '');
+  }
+  function flashFeedback(kind){
+    feedback.classList.remove('success','error');
+    void feedback.offsetWidth;
+    if(kind === 'ok') feedback.classList.add('success');
+    if(kind === 'bad') feedback.classList.add('error');
+    setTimeout(()=>feedback.classList.remove('success','error'), 700);
+  }
+
+  // sounds (simple beeps)
+  function beep(freq, duration=150, vol=0.07){
+    try{
+      const ac = new (window.AudioContext || window.webkitAudioContext)();
+      const o = ac.createOscillator();
+      const g = ac.createGain();
+      o.type = 'sine';
+      o.frequency.value = freq;
+      g.gain.value = vol;
+      o.connect(g); g.connect(ac.destination);
+      o.start();
+      setTimeout(()=>{ o.stop(); ac.close(); }, duration);
+    }catch(e){ /* ignore if AudioContext blocked */ }
+  }
+
+  // generate a target hour (avoid repeating same)
+  function pickNewTarget(prev){
+    let h;
+    do { h = Math.floor(Math.random()*12) + 1 } while(h === prev);
+    return h;
+  }
+
+  // check result: selectedHour -> compare with targetHour
+  function checkAnswer(selectedHour){
+    if(selectedHour === targetHour){
+      score++;
+      scoreEl.textContent = score;
+      showStatus('Correto! ✅', 'ok');
+      flashFeedback('ok');
+      beep(880,160,0.08);
+      // after small delay, generate next automatically
+      // setTimeout(()=> setTarget(pickNewTarget(targetHour)), 700);
+    } else {
+      showStatus('Errado — tente novamente', 'bad');
+      flashFeedback('bad');
+      beep(220,220,0.09);
+    }
+  }
+
+  // set target and update label
+  function setTarget(h){
+    targetHour = h;
+    targetLabel.textContent = `${h}h`;
+    showStatus('');
+    // reset hand to 12 (or random position)
+    setHandAngle(hourToAngle(12), false);
+  }
+
+  // init
+  drawFace();
+  setTarget(pickNewTarget(null));
+
+  // pointer dragging logic
+  let dragging = false;
+
+  function onPointerDown(e){
+    e.preventDefault();
+    const angle = pointerToAngle(e.clientX, e.clientY);
+    const snappedHour = angleToHour(angle);
+    // set immediately to snapped angle for a responsive feel
+    setHandAngle(hourToAngle(snappedHour));
+    dragging = true;
+    try { e.target.setPointerCapture(e.pointerId); } catch(_) {}
+  }
+  function onPointerMove(e){
+    if(!dragging) return;
+    e.preventDefault();
+    const angle = pointerToAngle(e.clientX, e.clientY);
+    const snappedHour = angleToHour(angle);
+    setHandAngle(hourToAngle(snappedHour));
+  }
+  function onPointerUp(e){
+    if(!dragging) return;
+    dragging = false;
+    try { e.target.releasePointerCapture && e.target.releasePointerCapture(e.pointerId); } catch(_) {}
+    const angle = pointerToAngle(e.clientX, e.clientY);
+    const snappedHour = angleToHour(angle);
+    // snap and check
+    setHandAngle(hourToAngle(snappedHour));
+    checkAnswer(snappedHour);
+  }
+
+  // attach pointer events to the whole clock container for ease
+  const clockEl = document.getElementById('clock');
+  clockEl.addEventListener('pointerdown', onPointerDown);
+  window.addEventListener('pointermove', onPointerMove);
+  window.addEventListener('pointerup', onPointerUp);
+
+  // keyboard accessibility: left/right to rotate hour, Enter to submit
+  let currentSelectedHour = 12;
+  function setSelectedHour(h){
+    currentSelectedHour = ((h - 1) % 12) + 1;
+    setHandAngle(hourToAngle(currentSelectedHour));
+  }
+  window.addEventListener('keydown', (ev) => {
+    if(ev.key === 'ArrowLeft'){
+      setSelectedHour(currentSelectedHour === 1 ? 12 : currentSelectedHour - 1);
+      ev.preventDefault();
+    } else if(ev.key === 'ArrowRight'){
+      setSelectedHour(currentSelectedHour === 12 ? 1 : currentSelectedHour + 1);
+      ev.preventDefault();
+    } else if(ev.key === 'Enter'){
+      checkAnswer(currentSelectedHour);
+      ev.preventDefault();
+    }
+  });
+
+  // buttons
+  document.getElementById('btnShuffle').addEventListener('click', ()=>{
+    setTarget(pickNewTarget(targetHour));
+  });
+  document.getElementById('btnNew').addEventListener('click', ()=>{
+    score = 0; scoreEl.textContent = score;
+    setTarget(pickNewTarget(targetHour));
+  });
+
+  // initialize selected to 12
+  setSelectedHour(12);
+
+  // Make sure SVG doesn't block pointer events outside visible area
+  svg.style.touchAction = 'none';
+
+  // small usability: on resize re-draw numbers (keeps crisp)
+  window.addEventListener('resize', ()=> drawFace());
+
+})();
+</script>
+</body>
+</html>

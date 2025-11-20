@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Matemática - Adição e Subtração</title>
+  <link rel="stylesheet" href="../css/jogos.css">
+  <style>
+    :root{--bg:#f7f9fc;--card:#fff;--accent:#2563eb;--ok:#16a34a;--err:#dc2626}
+    html,body{height:100%;margin:0;font-family:Inter,ui-sans-serif,system-ui,Arial}
+    body{
+      /* background:linear-gradient(180deg,#eef2ff 0%,var(--bg) 100%); */
+      display:flex;align-items:center;justify-content:center;padding:24px}
+    .wrap{width:550px;max-width:96%;background:var(--card);border-radius:14px;box-shadow:0 8px 30px rgba(2,6,23,.08);padding:24px}
+    h1{margin:0 0 6px;font-size:20px}
+    p.lead{margin:0 0 18px;color:#374151}
+    .exercise{display:flex;gap:16px;align-items:center}
+    .problem{font-size:40px;font-weight:700;background:#f8fafc;padding:18px 26px;border-radius:12px;min-width:220px;text-align:center}
+    input.answer{font-size:20px;padding:10px 12px;border-radius:10px;border:2px solid #e6eef8;width:100px;text-align:center}
+    .controls{display:flex;flex-direction:column;gap:10px;margin-left:8px}
+    .btn{background:var(--accent);color:white;padding:10px 12px;border-radius:10px;border:0;cursor:pointer;font-weight:600}
+    .btn.secondary{background:#eef2ff;color:var(--accent)}
+    .feedback{margin-top:14px;height:26px;font-weight:700}
+    .meta{display:flex;gap:12px;align-items:center;margin-top:8px;color:#475569}
+    .small{font-size:13px;color:#6b7280}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Pratique Adição e Subtração</h1>
+    <p class="lead">Resolva a operação mostrada e escreva a resposta.</p>
+
+    <div class="exercise">
+      <div class="problem" id="problem">0 + 0</div>
+      <input id="answer" class="answer" inputmode="numeric" autocomplete="off" placeholder="Resposta" aria-label="Resposta" />
+      <div class="controls">
+        <button id="checkBtn" class="btn">Verificar</button>
+        <button id="nextBtn" class="btn secondary">Próximo</button>
+      </div>
+    </div>
+
+    <div class="feedback" id="feedback" aria-live="polite"></div>
+    <div class="meta">
+      <div class="small">Acertos: <span id="correct">0</span></div>
+      <div class="small">Erros: <span id="wrong">0</span></div>
+      <div style="flex:1"></div>
+      <div class="small">Dificuldade: 
+        <select id="difficulty">
+          <option value="easy" selected>Fácil</option>
+          <option value="medium">Médio</option>
+          <option value="hard">Difícil</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      const problemEl = document.getElementById('problem');
+      const answerEl = document.getElementById('answer');
+      const checkBtn = document.getElementById('checkBtn');
+      const nextBtn = document.getElementById('nextBtn');
+      const feedbackEl = document.getElementById('feedback');
+      const correctEl = document.getElementById('correct');
+      const wrongEl = document.getElementById('wrong');
+      const difficultySel = document.getElementById('difficulty');
+
+      let current = {a:0,b:0,op:'+',ans:0};
+      let correct = 0, wrong = 0;
+
+      function getRangeForDifficulty(){
+        const d = difficultySel.value;
+        if(d==='easy') return 0; // 0..10
+        if(d==='medium') return 1; // 0..20
+        return 2; // 0..50
+      }
+
+      function randomInt(max){ return Math.floor(Math.random()*(max+1)); }
+
+      function newProblem(){
+        const diff = getRangeForDifficulty();
+        let max = diff===0?10:diff===1?20:50;
+        // choose operation randomly (50/50)
+        const op = Math.random()<0.5?'+':'-';
+        let a = randomInt(max);
+        let b = randomInt(max);
+        // ensure non-negative result for subtraction for younger students
+        if(op==='-' && a < b) [a,b] = [b,a];
+        current = {a,b,op,ans: op==='+'? (a+b):(a-b)};
+        problemEl.textContent = `${a} ${op} ${b}`;
+        answerEl.value = '';
+        feedbackEl.textContent = '';
+        answerEl.style.borderColor = '';
+        answerEl.style.backgroundColor = '';
+        answerEl.focus();
+      }
+
+      function checkAnswer(){
+        const raw = answerEl.value.trim();
+        if(raw===''){
+          feedbackEl.textContent = 'Digite uma resposta.';
+          return;
+        }
+        // allow negative sign and decimals? We'll parse as integer
+        const val = Number(raw);
+        if(Number.isNaN(val)){
+          feedbackEl.textContent = 'Resposta inválida.';
+          return;
+        }
+        if(val === current.ans){
+          feedbackEl.textContent = 'Correto!';
+          answerEl.style.backgroundColor = '#ecfdf5'; // light green
+          answerEl.style.borderColor = '#16a34a';
+          correct++;
+          correctEl.textContent = correct;
+        } else {
+          feedbackEl.textContent = `Errado — resposta correta: ${current.ans}`;
+          answerEl.style.backgroundColor = '#ffeaea';
+          answerEl.style.borderColor = '#dc2626';
+          wrong++;
+          wrongEl.textContent = wrong;
+        }
+      }
+
+      checkBtn.addEventListener('click', ()=> checkAnswer());
+      answerEl.addEventListener('keydown', (e)=>{ if(e.key === 'Enter') checkAnswer(); });
+      nextBtn.addEventListener('click', ()=> newProblem());
+
+      difficultySel.addEventListener('change', ()=> newProblem());
+
+      // start
+      newProblem();
+    })();
+  </script>
+</body>
+</html>

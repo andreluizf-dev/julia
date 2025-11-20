@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Formas 3D – Base64 Final</title>
+<style>
+ body { font-family: Arial; background:#f2f2f2; text-align:center; padding:20px; }
+ .image-box { width:260px; height:260px; background:white; border-radius:15px; border:2px solid #ccc; margin:20px auto; display:flex; align-items:center; justify-content:center; }
+ img { width:90%; height:90%; object-fit:contain; }
+ button { padding:18px; font-size:20px; border-radius:10px; border:0; margin:8px; background:#007bff; color:white; }
+ .correct { background:#4CAF50 !important; }
+ .wrong { background:#E53935 !important; }
+</style>
+</head>
+<body>
+<h1>Identifique a Forma</h1>
+<div class="image-box">
+ <img id="shapeImg" src="" />
+</div>
+<div>
+ <button onclick="check('esfera')" id="btn-esfera">Esfera</button>
+ <button onclick="check('cilindro')" id="btn-cilindro">Cilindro</button>
+ <button onclick="check('cubo')" id="btn-cubo">Cubo</button>
+ <button onclick="check('cone')" id="btn-cone">Cone</button>
+</div>
+<div><button onclick="embaralhar()" id="btn-cone">Trocar a Forma</button></div>
+<script>
+// Base64 images inserted from file
+const esferaImgs = [
+  "img/bola.jpg",
+  "img/bola2.jpg"
+];
+const cilindroImgs = [
+  "img/cilindro.jpg",
+  "img/cilindro2.jpg"
+];
+const cuboImgs = [
+  "img/cubo.jpg",
+  "img/cubo2.jpg"
+];
+const coneImgs = [
+  "img/cone.jpg",
+  "img/cone2.jpg"
+];
+
+const shapes = [
+  { name: "esfera", list: esferaImgs },
+  { name: "cilindro", list: cilindroImgs },
+  { name: "cubo", list: cuboImgs },
+  { name: "cone", list: coneImgs }
+];
+
+let current = null;
+function nextShape(){
+ document.querySelectorAll('button').forEach(b=>b.classList.remove('correct','wrong'));
+ const i = Math.floor(Math.random()*shapes.length);
+ current = shapes[i];
+ const list = current.list;
+ const img = list[Math.floor(Math.random()*list.length)];
+ document.getElementById('shapeImg').src = img;
+}
+
+function embaralhar(){
+nextShape();
+}
+
+function check(sel){
+ const btn = document.getElementById('btn-'+sel);
+ if(sel===current.name) btn.classList.add('correct');
+ else btn.classList.add('wrong');
+ setTimeout(nextShape,700);
+}
+nextShape();
+</script>
+</body>
+</html>
