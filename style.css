@@ -1,0 +1,74 @@
+@import url("geral.css");
+
+.container {
+    min-width: 20rem;   
+    background-color: transparent;
+    border: 2x solid rgba(255, 255, 255, .2);
+    border-radius: 10px;
+    color: #fff;
+    padding: 5px 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, .3);
+    backdrop-filter: blur(50px); 
+}
+
+.index{
+    min-height: 210px; 
+}
+
+.cont_ingles{
+    height: 450px;
+}
+
+.cont_math{
+    height: 400px;
+}
+
+.titulo_ing{
+    padding-bottom: 10px;
+    color: brown;
+
+}
+
+.container h1 {
+    font-size: 1.5rem;
+    text-align: center;    
+    padding-bottom: 30px;
+    color: var(--h1_cor);
+}
+
+.botao {
+    width: 100%;
+    height: 50px;
+    background-color: #fff;
+    border: none;
+    border-radius: 40px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    color: #333;
+    font-weight: 600;
+    box-shadow: 0 0 10px rgba(0, 0, 0, .1);
+    margin-bottom: 13px;
+}
+
+.botao:hover {
+    background-color: #cb82cf;
+    border: 2px solid rgba(255, 255, 255, .2);
+    color: #ffffff;
+    transition: 0.5s;
+}
+
+.registro {
+    font-size: 14px;
+    text-align: center;
+    margin: 20px 0 15px;
+}
+
+.registro a {
+    text-decoration: none;
+    color: #fff;
+    font-weight: 600;
+}
+
+.registro a:hover {
+    text-decoration: underline;
+}
