@@ -4,6 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Prática: Horas exatas — Relógio de ponteiro</title>
+<link rel="stylesheet" href="../css/jogos.css"> 
 <style>
   :root{
     --bg:#f7fafc;
@@ -13,9 +14,12 @@
     --danger:#ef4444;
     --muted:#6b7280;
   }
-  html,body{height:100%;margin:0;font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;}
-  body{display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#eef2f7 0%,var(--bg) 100%);padding:20px;}
-  .card{
+  html,body{
+    height:100%;margin:0;font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;}
+  
+    /* body{display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#eef2f7 0%,var(--bg) 100%);padding:20px;} */
+  
+    .card{
     width:100%;
     max-width:720px;
     background:var(--card);
@@ -97,7 +101,7 @@
 <body>
   <div class="card" role="main" aria-label="Exercício de horas">
     <header>
-      <h1>Pratique horas exatas — Relógio analógico</h1>
+      <h1>Horas</h1>
       <div class="controls">
         <button id="btnNew" title="Novo desafio">Novo</button>
         <button id="btnShuffle" class="secondary" title="Sortear nova hora">Sortear hora</button>
@@ -109,7 +113,7 @@
         <div style="font-size:0.95rem">Coloque o ponteiro em:</div>
         <div id="targetLabel" style="font-size:1.2rem;font-weight:800;margin-left:6px">—</div>
       </div>
-      <div style="margin-left:auto;color:var(--muted);font-size:0.9rem">Horas exatas (apenas)</div>
+      <!-- <div style="margin-left:auto;color:var(--muted);font-size:0.9rem">Horas exatas (apenas)</div> -->
     </div>
 
     <div class="clock-wrap">
@@ -152,7 +156,7 @@
     <div class="status" id="statusText" aria-live="polite"></div>
 
     <div class="helper">
-      <div class="hint">Arraste o ponteiro (ou toque) até a posição correta. Ele encaixa automaticamente nas horas exatas.</div>
+      <div class="hint">Arraste o ponteiro (ou toque) até a posição correta</div>
       <div class="score">Acertos: <span id="score">0</span></div>
     </div>
   </div>
