@@ -1,8 +1,7 @@
 @import url("geral.css");
 
 .container {
-    min-width: 20rem;
-    min-height: 150px;
+    min-width: 20rem;   
     background-color: transparent;
     border: 2x solid rgba(255, 255, 255, .2);
     border-radius: 10px;
@@ -12,8 +11,16 @@
     backdrop-filter: blur(50px); 
 }
 
+.index{
+    min-height: 210px; 
+}
+
 .cont_ingles{
-    height: 500px;
+    height: 450px;
+}
+
+.cont_math{
+    height: 400px;
 }
 
 .titulo_ing{
@@ -29,58 +36,6 @@
     color: var(--h1_cor);
 }
 
-.input-box {
-    position: relative;
-    width: 100%;
-    height: 50px;
-    margin: 30px 0;
-}
-
-.input-box input {
-    width: 100%;
-    height: 100%;
-    background-color: transparent;
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    border-radius: 40px;
-    outline: none;
-    font-size: 16px;
-    color: #ffffff;
-    padding: 20px 45px 20px 20px;
-}
-
-.input-box input::placeholder {
-    color: #d7d3d3;
-}
-
-.input-box i {
-    position: absolute;
-    right: 20px;
-    top: 25%;
-    font-size: 20px;
-}
-
-.lembrar {
-    display: flex;
-    justify-content: space-between;
-    margin: -15px 0 15px;
-}
-
-.lembrar label input {
-    accent-color: #fff;
-    margin-right: 5px;
-}
-
-.lembrar a {
-    text-decoration: none;
-    color: #fff;
-
-}
-
-.lembrar a:hover {
-    text-decoration: underline;
-   
-}
-
 .botao {
     width: 100%;
     height: 50px;
@@ -92,10 +47,7 @@
     color: #333;
     font-weight: 600;
     box-shadow: 0 0 10px rgba(0, 0, 0, .1);
-}
-
-.btningles{
-    padding-bottom: 15px;    
+    margin-bottom: 13px;
 }
 
 .botao:hover {
