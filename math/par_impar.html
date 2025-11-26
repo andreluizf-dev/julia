@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Par ou Ímpar</title>
+<link rel="stylesheet" href="../css/jogos.css"> 
+<style>
+    /* body {
+        font-family: Arial, sans-serif;
+        background: #f2f2f2;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 20px;
+    } */
+
+    .container {
+        /* background: white; */
+        padding: 25px;
+        border-radius: 15px;
+        width: 100%;
+        max-width: 400px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        text-align: center;
+        transition: 0.3s;
+    }
+
+    h2 {
+        margin-bottom: 15px;
+    }
+
+    #numero {
+        font-size: 60px;
+        font-weight: bold;
+        margin: 20px 0;
+    }
+
+    .botoes {
+        display: flex;
+        justify-content: space-around;
+        margin-top: 20px;
+    }
+
+    button {
+        padding: 15px 25px;
+        font-size: 20px;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        background: #1976d2;
+        color: white;
+        transition: 0.2s;
+    }
+
+    button:hover {
+        background: #0d47a1;
+    }
+
+    /* animações */
+    .acerto {
+        animation: acertoAnim 0.6s ease;
+        background: #c8f7c5 !important;
+    }
+
+    .erro {
+        animation: erroAnim 0.6s ease;
+        background: #f9c0c0 !important;
+    }
+
+    @keyframes acertoAnim {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.06); }
+        100% { transform: scale(1); }
+    }
+
+    @keyframes erroAnim {
+        0% { transform: scale(1); }
+        50% { transform: scale(0.94); }
+        100% { transform: scale(1); }
+    }
+
+</style>
+</head>
+<body>
+
+<div class="container painel" id="card">
+    <h2>Par ou Ímpar?</h2>
+
+    <div id="numero">0</div>
+
+    <div class="botoes">
+        <button onclick="verificar('par')">Par</button>
+        <button onclick="verificar('impar')">Ímpar</button>
+    </div>
+
+    <br><br>
+    <button onclick="novoNumero()" style="background:#388e3c;">Novo Número</button>
+</div>
+
+<script>
+
+function novoNumero() {
+    let n = Math.floor(Math.random() * 50) + 1;
+    document.getElementById("numero").innerText = n;
+    limparAnimacao();
+}
+
+// remove animações para aplicar novamente
+function limparAnimacao() {
+    let card = document.getElementById("card");
+    card.classList.remove("acerto", "erro");
+}
+
+function verificar(escolha) {
+    let n = parseInt(document.getElementById("numero").innerText);
+    let resultado = (n % 2 === 0) ? "par" : "impar";
+    let card = document.getElementById("card");
+
+    limparAnimacao();
+
+    if (escolha === resultado) {
+        card.classList.add("acerto");
+    } else {
+        card.classList.add("erro");
+    }
+
+    setTimeout(() => novoNumero(), 800);
+}
+
+// inicia com um número
+novoNumero();
+
+</script>
+
+</body>
+</html>
